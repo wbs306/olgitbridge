@@ -4,7 +4,15 @@
 const config = module.exports = { forward: { }, ssl: { } };
 
 // overleaf server
-config.olServer = 'http://localhost';
+
+// overleaf web api
+config.olApi = 'http://localhost:3000'
+
+// api username
+config.apiUsername = 'overleaf'
+
+// api password
+config.apiPassword = 'password'
 
 // used if all the working directories in one place
 // must be absolute path ending with '/'

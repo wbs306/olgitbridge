@@ -135,10 +135,10 @@ const upSyncDir =
 | Compares the pad with the blueprint and uploads all changes to overleaf.
 */
 module.exports =
-	async function( client, olServer, project )
+	async function( client, olServer, olApi, project, apiUsername, apiPassword, userId )
 {
 	console.log( client.count, 'overleaf joining project' );
-	project.info = await olops.joinProject( client, olServer, project.id );
+	project.info = await olops.joinProject( client, olApi, project.id, apiUsername, apiPassword, userId );
 	project.tree = await olops.buildTree( project.info.rootFolder[ 0 ] );
 	await upSyncDir( client, olServer, project, '', project.tree );
 };

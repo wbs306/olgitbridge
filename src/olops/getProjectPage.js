@@ -10,4 +10,7 @@ module.exports =
 	const regexMETA = /<meta name="ol-csrfToken" content="([^"]*)"/;
 	const csrf = res.data.match( regexMETA )[ 1 ];
 	client.defaults.headers.common[ 'x-csrf-token' ] = csrf;
+
+	const regexUserId = /<meta name="ol-user_id" content="([^"]*)"/;
+	return res.data.match( regexUserId )[ 1 ];
 };

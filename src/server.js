@@ -23,6 +23,10 @@ const olServer = config.olServer;
 const padsDir = config.padsDir;
 const reposDir = config.reposDir;
 
+const olApi = config.olApi;
+const apiUsername = config.apiUsername;
+const apiPassword = config.apiPassword;
+
 // cache of handled projects
 const projects = { };
 
@@ -74,13 +78,13 @@ const endRemoteGitRequest =
 	if( cmd === 'git-receive-pack' )
 	{
 		console.log( client.count, 'upsyncing' );
-		await upsync( client, olServer, project );
+		await upsync( client, olServer, olApi, project, apiUsername, apiPassword, auth.userId );
 	}
 	console.log( client.count, 'overleaf logout' );
 	await olops.logout( client, olServer );
 	console.log( client.count, 'releasing project semaphore' );
 	project.semaphore.release( pflag );
-	users.release( auth.email, auth.uflag );
+	users.release( auth.email, auth.uflag, auth.userId );
 	console.log( client.count, 'all done' );
 };
 
@@ -113,12 +117,13 @@ const handleAuth =
 	console.log( client.count, 'requesting user semaphore' );
 	const uflag = await users.get( email );
 
+	let userId;
 	console.log( client.count, 'auth email', email );
 	console.log( client.count, 'overleaf login' );
 	try
 	{
 		await olops.login( client, olServer, email, password );
-		await olops.getProjectPage( client, olServer, project_id );
+		userId = await olops.getProjectPage( client, olServer, project_id );
 	}
 	catch( e )
 	{
@@ -132,7 +137,7 @@ const handleAuth =
 		// rethrows other errors
 		throw e;
 	}
-	return Object.freeze({ email: email, uflag: uflag });
+	return Object.freeze({ email: email, uflag: uflag, userId: userId });
 };
 
 /*
