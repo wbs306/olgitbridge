@@ -11,7 +11,7 @@ module.exports =
 {
 	const res = await client.get( olServer + '/login' );
 	const data = res.data;
-	const regexCSRF = /input name="_csrf" type="hidden" value="([^"]*)">/;
+	const regexCSRF = /<meta name="ol-csrfToken" content="([^"]*)"/;
 	const csrf = data.match( regexCSRF )[ 1 ];
 	await client.post(
 		olServer + '/login',
