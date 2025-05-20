@@ -213,6 +213,13 @@ const serve =
 	const count = '[' + (++counter) + ']';
 	const url = req.url;
 	let project_id = url.split( '/' )[ 1 ];
+	let downSyncOnly = false;
+
+	if ( project_id.startsWith( 'sync-' ) )
+	{
+		project_id = project_id.replace( 'sync-', '' );
+		downSyncOnly = true;
+	}
 
 	// cuts away the .git if given
 	if( project_id.endsWith( '.git' ) )
@@ -246,6 +253,14 @@ const serve =
 			// FIXME in case of git-receive-pack it should *ALWAYS* sync before.
 			console.log( count, 'skipping downsync as last was ', (now - lastSync) / 1000 ,'s ago' );
 		}
+	}
+
+	if ( downSyncOnly )
+	{
+		res.writeHead( 200 );
+		res.end( 'Synced' );
+		await release( client, auth, project, pflag );
+		return
 	}
 
 	// potentially unzips body stream
