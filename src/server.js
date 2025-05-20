@@ -33,6 +33,17 @@ const projects = { };
 // connection counter (for logging messages)
 let counter = 0;
 
+const release =
+	async function( client, auth, project, pflag )
+{
+	console.log( client.count, 'overleaf logout' );
+	await olops.logout( client, olServer );
+	console.log( client.count, 'releasing project semaphore' );
+	project.semaphore.release( pflag );
+	users.release( auth.email, auth.uflag, auth.userId );
+	console.log( client.count, 'all done' );
+}
+
 /*
 | Handles the git request.
 */
@@ -52,9 +63,7 @@ const beginRemoteGitRequest =
 	{
 		res.writeHead( 400, 'Bad Request' );
 		res.end( );
-		olops.logout( client, olServer );
-		console.log( client.count, 'releasing project semaphore' );
-		projects[ project_id ].semaphore.release( pflag );
+		await release( client, auth, project, pflag );
 		return;
 	}
 
@@ -80,12 +89,7 @@ const endRemoteGitRequest =
 		console.log( client.count, 'upsyncing' );
 		await upsync( client, olServer, olApi, project, apiUsername, apiPassword, auth.userId );
 	}
-	console.log( client.count, 'overleaf logout' );
-	await olops.logout( client, olServer );
-	console.log( client.count, 'releasing project semaphore' );
-	project.semaphore.release( pflag );
-	users.release( auth.email, auth.uflag, auth.userId );
-	console.log( client.count, 'all done' );
+	await release( client, auth, project, pflag );
 };
 
 /*
