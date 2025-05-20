@@ -284,7 +284,7 @@ const start =
 	// creates the working dirs, ignores already exisiting errors
 	for( let dir of [ reposDir, padsDir, bluesDir, hashDir ] )
 	{
-		try{ await fs.mkdir( dir ); }
+		try{ await fs.mkdir( dir, { recursive: true } ); }
 		catch( e ) { if( e.code !== 'EEXIST' ) throw e; }
 	}
 
