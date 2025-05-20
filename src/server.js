@@ -236,6 +236,7 @@ const serve =
 
 	const pflag = await prepareProject( count, project_id );
 	const project = projects[ project_id ];
+	let syncState = 'NO_SYNCED';
 	{
 		const now = Date.now( );
 		const lastSync = project.lastSync;
@@ -247,6 +248,7 @@ const serve =
 				// downsync returns true if it wasnt cached
 				await git.save( count, project.padDir, 'synced by olgitbridge' );
 			}
+			syncState = 'SYNCED';
 		}
 		else
 		{
@@ -258,7 +260,7 @@ const serve =
 	if ( downSyncOnly )
 	{
 		res.writeHead( 200 );
-		res.end( 'Synced' );
+		res.end( syncState );
 		await release( client, auth, project, pflag );
 		return
 	}
