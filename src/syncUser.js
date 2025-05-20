@@ -55,14 +55,18 @@ const main = async () => {
         await git.createRepo(remote, userDir);
     }
 
+    let haveSynced = false;
     try {
         const projects = await olops.userProjects(client, olServer);
         for (const project of projects) {
             const projectId = project._id;
-            await syncProject(projectId);
-            await copyFilesToUserFolder(projectId, userDir);
+            const syncState = await syncProject(projectId);
+            if (syncState === 'SYNCED') {
+                haveSynced = true;
+                await copyFilesToUserFolder(projectId, userDir);
+            }
         }
-        await git.save('', userDir, 'Synced user projects');
+        if (haveSynced) await git.save('', userDir, 'Synced user projects');
     } catch (e) {
         throw e;
     }
