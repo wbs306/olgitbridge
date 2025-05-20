@@ -1,0 +1,1 @@
+0 3 * * * root /usr/local/bin/node /var/olgitbridge/src/syncUser.js >> /var/log/syncUser.log 2>&1
