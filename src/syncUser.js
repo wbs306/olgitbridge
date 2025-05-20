@@ -32,7 +32,6 @@ const copyFilesToUserFolder = async (projectId, targetDir) => {
         await fs.stat(projectDir);
     } catch (e) {
         if (e.code !== 'ENOENT') throw e;
-        console.log(projectDir)
         await fs.mkdir(projectDir);
     }
 
