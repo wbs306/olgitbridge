@@ -14,6 +14,7 @@ const password = syncConfig.password;
 const remote = syncConfig.remote;
 
 const syncProject = async (projectId) => {
+    let syncState;
     await axios.get(`http://localhost:${port}/sync-${projectId}`,
         {
             auth: {
@@ -22,8 +23,9 @@ const syncProject = async (projectId) => {
             }
         }
     ).then(response => {
-        return response.data;
+        syncState = response.data;
     });
+    return syncState;
 }
 
 const copyFilesToUserFolder = async (projectId, targetDir) => {
