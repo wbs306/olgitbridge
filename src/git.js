@@ -36,6 +36,17 @@ const pull =
 	await aspawn( gitBinary, [ 'pull', '--no-edit' ] , { cwd: dir } );
 };
 
+const createRepo =
+	async function ( remote, dir )
+{
+	await aspawn( gitBinary, [ 'init', '-b', 'main' ], { cwd: dir } );
+	await aspawn( gitBinary, [ 'remote', 'add', 'origin', remote ], { cwd: dir } );
+	await aspawn( '/usr/bin/touch', [ 'README.md' ], { cwd: dir } );
+	await aspawn( gitBinary, [ 'add', 'README.md' ], { cwd: dir } );
+	await aspawn( gitBinary, [ 'commit', '-m', 'Inital commit' ], { cwd: dir });
+	await aspawn( gitBinary, [ 'push', '-u', 'origin', 'main' ], { cwd: dir } );
+}
+
 /*
 | Stages, commits and pushes.
 |
@@ -67,4 +78,5 @@ module.exports =
 	init: init,
 	pull: pull,
 	save: save,
+	createRepo: createRepo,
 };
